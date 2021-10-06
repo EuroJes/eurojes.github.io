@@ -85,6 +85,39 @@ map.addControl(new mapboxgl.NavigationControl());
 ;
     
 map.on("load",function(e){map.addSource("places",{type:"geojson",data:stores}),buildLocationList(stores)}),stores.features.forEach(function(a,o){var e=document.createElement("div");e.id="marker-"+o,e.className="marker",new mapboxgl.Marker(e,{offset:[0,-23]}).setLngLat(a.geometry.coordinates).addTo(map),e.addEventListener("click",function(e){flyToStore(a),createPopUp(a);var t=document.getElementsByClassName("active");e.stopPropagation(),t[0]&&t[0].classList.remove("active"),document.getElementById("listing-"+o).classList.add("active")})});
+
+geocoder.on('result', ({ result }) => {
+  const searchResult = result.geometry;
+const options = { units: 'kilometers' };
+for (const store of stores.features) {
+  store.properties.distance = turf.distance(
+    searchResult,
+    store.geometry,
+    options
+  );
+}
+
+
+});
+
+
+
+
+
+
+
+const geocoder = new MapboxGeocoder({
+  accessToken: mapboxgl.accessToken, // Set the access token
+  mapboxgl: mapboxgl, // Set the mapbox-gl instance
+  marker: true, // Use the geocoder's default marker style
+  bbox: [-77.210763, 38.803367, -76.853675, 39.052643] // Set the bounding box coordinates
+});
+
+map.addControl(geocoder, 'top-left');
+
+
+
+
 function flyToStore(o){map.flyTo({center:o.geometry.coordinates,zoom:13})}
 
   function createPopUp(currentFeature) {
