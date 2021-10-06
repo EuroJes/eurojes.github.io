@@ -82,11 +82,12 @@ function flyToStore(o){map.flyTo({center:o.geometry.coordinates,zoom:13})}
   function createPopUp(currentFeature) {
     var popUps = document.getElementsByClassName('mapboxgl-popup');
     var prop = currentFeature.properties;
-
+//Diacriticals cause issues in urls when generated from title
 	var Prov = prop.Province.toLowerCase();
     var jpeg1 = prop.Centre.replace(" ", "");
     var jpeg2 = jpeg1.substring(0, 6);
-	var jpeg = Prov+'_'+jpeg2.toLowerCase();
+    var jpeg3 = jpeg2.normalize("NFD").replace(/[\u0300-\u036f]/g, "")					   
+	var jpeg = Prov+'_'+jpeg3.toLowerCase();
 
 
     var lowCountry = prop.Country.toLowerCase(); 
